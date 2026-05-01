@@ -46,6 +46,37 @@ const products = [
     sizeChartLink: "images/clothing-size-chart.png"
   },
   {
+    id: "id1",
+    image: "images/products/backpack.jpg",
+    name: "Backpack",
+    rating: {
+      stars: 4.5,
+      count:160
+    },
+    priceCents: 8700,
+    keyword: [
+      "backpacks",
+      "bags",
+      "travel",
+      "school"
+    ]
+  },
+  {
+    id: "id2",
+    image: "images/products/umbrella.jpg",
+    name: "Umbrella",
+    rating: {
+      stars: 4.5,
+      count: 276
+    },
+    priceCents: 2999,
+    keyword: [
+      "umbrellas",
+      "rain",
+      "weather"
+    ]
+  },
+  {
     id: "54e0eccd-8f36-462b-b68a-8182611d9add",
     image: "images/products/black-2-slot-toaster.jpg",
     name: "2 Slot Toaster - Black",
