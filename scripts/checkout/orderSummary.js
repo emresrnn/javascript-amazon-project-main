@@ -1,15 +1,13 @@
 import { cart, removeFromCart, updateCartQuantity, updateQuantity, updateDeliveryOption} from "../../data/cart.js";
 import { products, getProduct } from "../../data/products.js";
 import formatCurrency from "../utils/money.js";
-import { hello } from "https://unpkg.com/supersimpledev@1.0.1/hello.esm.js";
 import dayjs from "https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js";
 import { deliveryOptions, getDeliveryOption, calculateDeliveryDate } from "../../data/deliveryOptions.js";
 import { renderPaymentSummary } from "./paymentSummary.js";
-import { renderCheckoutHeader } from "./checkoutHeader.js";
 
 
 
-export function renderOrderSummary(){
+export function renderOrderSummary(onUpdate = () => {}){
     
   let cartSummaryHTML = "";
 
@@ -25,7 +23,7 @@ export function renderOrderSummary(){
     const dateString = calculateDeliveryDate(deliveryOption);
 
     cartSummaryHTML += `
-      <div class="cart-item-container js-cart-item-container-${productId}">
+      <div class="cart-item-container js-cart-item-container js-cart-item-container-${productId}">
         <div class="delivery-date">
           Delivery date: ${dateString}
         </div>
@@ -41,7 +39,7 @@ export function renderOrderSummary(){
             <div class="product-price">
               $${formatCurrency(matchingProduct.priceCents)}
             </div>
-            <div class="product-quantity">
+            <div class="product-quantity js-product-quantity-${productId}">
               <span>
                 Quantity: <span class="quantity-label js-quantity-label-${productId}">${cartItem.quantity}</span>
               </span>
@@ -50,7 +48,7 @@ export function renderOrderSummary(){
               </span>
               <input class="quantity-input js-quantity-input js-quantity-input-${productId}" data-product-id="${productId}">
               <span class="save-quantity-link link-primary js-save-link" data-product-id="${productId}">Save</span>
-              <span class="delete-quantity-link link-primary js-delete-link" data-product-id="${productId}">
+              <span class="delete-quantity-link link-primary js-delete-link js-delete-link-${productId}" data-product-id="${productId}">
                 Delete
               </span>
             </div>
@@ -96,13 +94,14 @@ export function renderOrderSummary(){
   }
 
   document.querySelector(".js-order-summary").innerHTML = cartSummaryHTML;
-  renderCheckoutHeader();
+  onUpdate();
   document.querySelectorAll(".js-delete-link").forEach((link) => {
     link.addEventListener("click", () => {
       const productId = link.dataset.productId;
       removeFromCart(productId);
-      renderOrderSummary();
+      renderOrderSummary(onUpdate);
       renderPaymentSummary();
+      onUpdate();
     })
   })
 
@@ -130,7 +129,7 @@ export function renderOrderSummary(){
 
       updateQuantity(productId, newQuantity);
       document.querySelector(`.js-quantity-label-${productId}`).textContent = newQuantity;
-      renderCheckoutHeader();
+      onUpdate();
       renderPaymentSummary();
     });
   });
@@ -146,8 +145,9 @@ export function renderOrderSummary(){
       document.querySelector(`.js-cart-item-container-${productId}`).classList.remove("is-editing-quantity");
       if (newQuantity === 0){
         removeFromCart(productId);
-        renderOrderSummary();
+        renderOrderSummary(onUpdate);
         renderPaymentSummary();
+        onUpdate();
         return;
       }
       if (newQuantity >= 1000){
@@ -155,7 +155,7 @@ export function renderOrderSummary(){
       }
       updateQuantity(productId, newQuantity);
       document.querySelector(`.js-quantity-label-${productId}`).textContent = newQuantity;
-      renderCheckoutHeader();
+      onUpdate();
       renderPaymentSummary();
     });
   });
@@ -164,8 +164,9 @@ export function renderOrderSummary(){
     option.addEventListener("click", () => {
       const { productId, deliveryOptionId } = option.dataset;
       updateDeliveryOption(productId, deliveryOptionId);
-      renderOrderSummary();
+      renderOrderSummary(onUpdate);
       renderPaymentSummary();
+      onUpdate();
     });
   });
 }
